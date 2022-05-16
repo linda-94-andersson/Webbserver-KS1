@@ -13,7 +13,7 @@ const server = http.createServer(async (req, res) => {
     else if (req.url.match(/\/api\/todos\/([0-9]+)/) && req.method === "GET") {
         try {
             const id = req.url.split("/")[3];
-            const todo = await new Todo().getTodos(id);
+            const todo = await new Todo().getTodo(id);
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(JSON.stringify(todo));
         } catch (error) {
