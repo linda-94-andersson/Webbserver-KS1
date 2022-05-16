@@ -12,7 +12,7 @@ function getReqData(req) {
                 resolve(body);
             });
         } catch (error) {
-            reject(error);
+            reject(error + "getReqDatta error");
         }
     });
 }
