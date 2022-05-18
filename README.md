@@ -1,5 +1,8 @@
 # Kunskapskontroll 1
 
+### Frontend länk
+https://main--linda-a-to-do-list.netlify.app/
+
 ## Kunskapskontroll 1: Todo list API
 
 ### För att uppnå Godkänt är kraven att:
@@ -9,7 +12,7 @@
 - API:et ska ha följande endpoints:
 - GET /todos - Hämta alla todos (X)
 - GET /todos/:id - Hämta en todo (X)
-- POST /todos - Lägg till en todo ()
+- POST /todos - Lägg till en todo (X)
 - PUT /todos/:id - Ändra en Todo (full) ()
 - PATCH /todos/:id - Ändra en todo (partial) ()
 - DELETE /todos/:id - Ta bort en todo ()
