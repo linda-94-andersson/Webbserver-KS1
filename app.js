@@ -5,8 +5,15 @@ const { getReqData } = require("./utils");
 const PORT = process.env.PORT || 5000;
 
 const server = http.createServer(async (req, res) => {
+    if (req.method === "OPTIONS") {
+		res.setHeader("Access-Control-Allow-Origin", "*");
+		res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+		res.statusCode = 200;
+		res.end();
+	}
     if (req.url === "/api/todos" && req.method === "GET") {
         const todos = await new Todo().getTodos();
+        res.setHeader("Access-Control-Allow-Origin", "*");
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify(todos));
     }
@@ -14,6 +21,7 @@ const server = http.createServer(async (req, res) => {
         try {
             const id = req.url.split("/")[3];
             const todo = await new Todo().getTodo(id);
+            res.setHeader("Access-Control-Allow-Origin", "*");
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(JSON.stringify(todo));
         } catch (error) {
@@ -25,6 +33,7 @@ const server = http.createServer(async (req, res) => {
         try {
             const id = req.url.split("/")[3];
             let message = await new Todo().deleteTodo(id);
+            res.setHeader("Access-Control-Allow-Origin", "*");
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(JSON.stringify({ message }));
         } catch (error) {
@@ -36,6 +45,7 @@ const server = http.createServer(async (req, res) => {
         try {
             const id = req.url.split("/")[3];
             let updated_todo = await new Todo().updateTodo(id);
+            res.setHeader("Access-Control-Allow-Origin", "*");
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(JSON.stringify(updated_todo));
         } catch (error) {
@@ -47,6 +57,7 @@ const server = http.createServer(async (req, res) => {
         try {
             const id = req.url.split("/")[3];
             let updated_todo = await new Todo().updateTodo(id);
+            res.setHeader("Access-Control-Allow-Origin", "*");
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(JSON.stringify(updated_todo));
         } catch (error) {
@@ -57,6 +68,7 @@ const server = http.createServer(async (req, res) => {
     else if (req.url === "/api/todos" && req.method === "POST") {
         let todo_data = await getReqData(req);
         let todo = await new Todo().createTodo(JSON.parse(todo_data));
+        res.setHeader("Access-Control-Allow-Origin", "*");
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify(todo));
     }
