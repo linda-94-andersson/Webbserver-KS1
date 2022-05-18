@@ -1,26 +1,22 @@
 const todos = [
     {
         id: 1,
-        title: "Coding in Javascript",
-        description: "Working with functions in JavaScript",
+        name: "Coding in Javascript",
         completed: false,
     },
     {
         id: 2,
-        title: "Cooking dinner",
-        description: "Preparing pasta and chicken",
+        name: "Cooking dinner",
         completed: false,
     },
     {
         id: 3,
-        title: "Taling a walk",
-        description: "Easy time at the park",
+        name: "Taking a walk",
         completed: false,
     },
     {
         id: 4,
-        title: "Wathcing Netflix",
-        description: "Enjoying the new premiered series",
+        name: "Wathcing Netflix",
         completed: false,
     },
 ];
