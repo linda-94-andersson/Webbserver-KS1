@@ -1,3 +1,4 @@
+
 const http = require("http");
 const Todo = require("./controller");
 const { getReqData } = require("./utils");
@@ -5,15 +6,19 @@ const { getReqData } = require("./utils");
 const PORT = process.env.PORT || 5000;
 
 const server = http.createServer(async (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Methods", "GET, PATCH, DELETE, OPTIONS, POST, PUT");
+
     if (req.method === "OPTIONS") {
-		res.setHeader("Access-Control-Allow-Origin", "*");
-		res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-		res.statusCode = 200;
-		res.end();
-	}
+        res.statusCode = 200;
+        res.end();
+        return;
+    }
+
     if (req.url === "/api/todos" && req.method === "GET") {
         const todos = await new Todo().getTodos();
-        res.setHeader("Access-Control-Allow-Origin", "*");
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify(todos));
     }
@@ -21,19 +26,28 @@ const server = http.createServer(async (req, res) => {
         try {
             const id = req.url.split("/")[3];
             const todo = await new Todo().getTodo(id);
-            res.setHeader("Access-Control-Allow-Origin", "*");
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(JSON.stringify(todo));
+
+            // fs.readFile("todo.JSON", (err, data) => {
+            //     if (err) throw error;
+            //     console.log(data.toString());
+
+            //     const info = data.toString();
+            //     console.log(info);
+
+            //     res.end(JSON.stringify(info));
+            // })
+
         } catch (error) {
             res.writeHead(404, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ message: error + "GET:id error"}));
+            res.end(JSON.stringify({ message: error + "GET:id error" }));
         }
     }
     else if (req.url.match(/\/api\/todos\/([0-9]+)/) && req.method === "DELETE") {
         try {
             const id = req.url.split("/")[3];
             let message = await new Todo().deleteTodo(id);
-            res.setHeader("Access-Control-Allow-Origin", "*");
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(JSON.stringify({ message }));
         } catch (error) {
@@ -45,30 +59,27 @@ const server = http.createServer(async (req, res) => {
         try {
             const id = req.url.split("/")[3];
             let updated_todo = await new Todo().updateTodo(id);
-            res.setHeader("Access-Control-Allow-Origin", "*");
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(JSON.stringify(updated_todo));
         } catch (error) {
             res.writeHead(404, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ message: error + "PATCH error"}));
+            res.end(JSON.stringify({ message: error + "PATCH error" }));
         }
     }
     else if (req.url.match(/\/api\/todos\/([0-9]+)/) && req.method === "PUT") {
         try {
             const id = req.url.split("/")[3];
             let updated_todo = await new Todo().updateTodo(id);
-            res.setHeader("Access-Control-Allow-Origin", "*");
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(JSON.stringify(updated_todo));
         } catch (error) {
             res.writeHead(404, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ message: error + "PUT error"}));
+            res.end(JSON.stringify({ message: error + "PUT error" }));
         }
     }
     else if (req.url === "/api/todos" && req.method === "POST") {
         let todo_data = await getReqData(req);
         let todo = await new Todo().createTodo(JSON.parse(todo_data));
-        res.setHeader("Access-Control-Allow-Origin", "*");
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify(todo));
     }
