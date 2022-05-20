@@ -41,7 +41,7 @@ const server = http.createServer(async (req, res) => {
 
         } catch (error) {
             res.writeHead(404, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ message: error + "GET:id error" }));
+            res.end(JSON.stringify({ message: error + " GET:id error" }));
         }
     }
     else if (req.url.match(/\/api\/todos\/([0-9]+)/) && req.method === "DELETE") {
@@ -52,7 +52,7 @@ const server = http.createServer(async (req, res) => {
             res.end(JSON.stringify({ message }));
         } catch (error) {
             res.writeHead(404, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ message: error + "DELETE error" }));
+            res.end(JSON.stringify({ message: error + " DELETE error" }));
         }
     }
     else if (req.url.match(/\/api\/todos\/([0-9]+)/) && req.method === "PATCH") {
@@ -63,7 +63,7 @@ const server = http.createServer(async (req, res) => {
             res.end(JSON.stringify(updated_todo));
         } catch (error) {
             res.writeHead(404, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ message: error + "PATCH error" }));
+            res.end(JSON.stringify({ message: error + " PATCH error" }));
         }
     }
     else if (req.url.match(/\/api\/todos\/([0-9]+)/) && req.method === "PUT") {
@@ -74,7 +74,7 @@ const server = http.createServer(async (req, res) => {
             res.end(JSON.stringify(updated_todo));
         } catch (error) {
             res.writeHead(404, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ message: error + "PUT error" }));
+            res.end(JSON.stringify({ message: error + " PUT error" }));
         }
     }
     else if (req.url === "/api/todos" && req.method === "POST") {

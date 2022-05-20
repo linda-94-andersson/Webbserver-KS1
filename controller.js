@@ -11,7 +11,7 @@ class Controller {
             if (todo) {
                 resolve(todo);
             } else {
-                reject(`Todo with id ${id} not found getTodo`);
+                reject(`Todo with id ${id} not found - getTodo`);
             }
         });
     }
@@ -31,7 +31,7 @@ class Controller {
             let todo = data.find((todo) => todo.id === parseInt(id));
 
             if (!todo) {
-                reject(`No todo with id ${id} found updateTodo`);
+                reject(`No todo with id ${id} found - updateTodo`);
             }
 
             todo["completed"] = true;
@@ -44,7 +44,7 @@ class Controller {
             let todo = data.find((todo) => todo.id === parseInt(id));
 
             if (!todo) {
-                reject(`No todo with id ${id} found deleteTodo`);
+                reject(`No todo with id ${id} found - deleteTodo`);
             }
 
             resolve(`Todo deleted successfully`);
