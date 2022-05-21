@@ -62,7 +62,9 @@ fetch('http://localhost:5000/api/todos', {
             method:"POST",
             body:JSON.stringify(
                 {
+                    id: 1,
                     name: 'test product'
+                    completed: false
                 }
             )
         })

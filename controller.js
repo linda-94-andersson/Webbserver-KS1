@@ -18,11 +18,7 @@ class Controller {
 
     async createTodo(todo) {
         return new Promise((resolve, _) => {
-            let newTodo = {
-                id: Math.floor(4 + Math.random() * 10), // new Date().getTime().toString() + Math.floor(Math.random()*1000000)
-                ...todo,
-            };
-            resolve(newTodo);
+            resolve(todo);
         });
     }
 
