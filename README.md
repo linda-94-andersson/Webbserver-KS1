@@ -72,7 +72,7 @@ fetch('http://localhost:5000/api/todos', {
 ```OUTPUT
     {
     "id": 5,
-    "name": "........",
+    "name": "test product",
     "completed": false
     }
 ```
@@ -80,7 +80,7 @@ fetch('http://localhost:5000/api/todos', {
 ## Update a todo 
 
 ```PUT
-fetch('http://localhost:5000/api/todos/1', {
+fetch('http://localhost:5000/api/todos/6', {
             method:"PUT",
             body:JSON.stringify(
                 {
@@ -93,7 +93,7 @@ fetch('http://localhost:5000/api/todos/1', {
 ```
 
 ```PATCH
-fetch('http://localhost:5000/api/todos/1', {
+fetch('http://localhost:5000/api/todos/6', {
             method:"PATCH",
             body:JSON.stringify(
                 {
@@ -116,7 +116,7 @@ fetch('http://localhost:5000/api/todos/1', {
 ## Delete a todo
 
 ```DELETE
-fetch('http://localhost:5000/api/todos/1', {
+fetch('http://localhost:5000/api/todos/6', {
             method:"DELETE"
         })
             .then(res=>res.json())
