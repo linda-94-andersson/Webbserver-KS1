@@ -28,7 +28,7 @@ const server = http.createServer(async (req, res) => {
             if (err) throw error;
 
             const response = data.toString();
-            console.log(response, " res");
+            console.log(response, " res todos");
 
             res.end(JSON.stringify(response));
         })
@@ -45,9 +45,9 @@ const server = http.createServer(async (req, res) => {
                 if (err) throw error;
 
                 const response = data.toString();
-                console.log(response, " res");
-
                 res.end(JSON.stringify(response));
+
+                console.log(todo, " res todo");
             })
 
         } catch (error) {
@@ -94,9 +94,25 @@ const server = http.createServer(async (req, res) => {
     else if (req.url === "/api/todos" && req.method === "POST") {
         let todo_data = await getReqData(req);
         let todo = await new Todo().createTodo(JSON.parse(todo_data));
+
         res.setHeader("Content-Type", "application/json");
-        res.statusCode = 201;
-        res.end(JSON.stringify(todo));
+
+        fs.readFile("data.json", (err, data) => {
+            if (err) throw error;
+
+            const parsedJson = JSON.parse(data);
+            parsedJson.push(todo);
+
+            const stringifiedJson = JSON.stringify(parsedJson, null, 2);
+
+            fs.writeFile("data.json", stringifiedJson, (err) => {
+                if (err) throw err;
+
+                res.statusCode = 201;
+                res.end(JSON.stringify(todo));
+                console.log(todo_data, " Wrote to data.json");
+            })
+        })
     }
     else {
         res.writeHead(404, { "Content-Type": "application/json" });
@@ -107,26 +123,3 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
     console.log(`Server started on port: ${PORT}`);
 });
-
-
-// Exemple kod
-// const fs = require("fs");
-
-// const customer = {
-//   name: process.argv[2],
-//   address: process.argv[3]
-// }
-
-// fs.readFile("./customers.json", (err, data) => {
-//   if (err) throw err;
-
-//   const parsedJson = JSON.parse(data);
-//   parsedJson.customers.push(customer)
-
-//   const stringifiedJson = JSON.stringify(parsedJson, null, 2);
-
-//   fs.writeFile("./customers.json", stringifiedJson, (err) => {
-//     if (err) throw err;
-//     console.log("Wrote to customers.json");
-//   })
-// })
