@@ -9,6 +9,10 @@ function getReqData(req) {
             });
 
             req.on("end", () => {
+                if (!body) {
+                    res.statusCode = 400;
+                    res.end("The body of the request is invalid.");
+                }
                 resolve(body);
             });
         } catch (error) {
