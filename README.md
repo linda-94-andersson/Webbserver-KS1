@@ -1,10 +1,11 @@
 # Kunskapskontroll 1
 
 ### Frontend länk
+
 https://main--linda-a-to-do-list.netlify.app/
 
+# Docs
 
-# Docs 
 ## Get all todos
 
 ```GET
@@ -77,7 +78,7 @@ fetch('http://localhost:5000/api/todos', {
     }
 ```
 
-## Update a todo 
+## Update a todo
 
 ```PUT
 fetch('http://localhost:5000/api/todos/6', {
@@ -122,6 +123,7 @@ fetch('http://localhost:5000/api/todos/6', {
             .then(res=>res.json())
             .then(json=>console.log(json))
 ```
+
 ```OUTPUT
     {
     "id": 6,
@@ -149,8 +151,8 @@ fetch('http://localhost:5000/api/todos/6', {
 
 ### För att uppnå Väl Godkänt behöver du implementera minst 4 av följande kriterier:
 
-- API:et ska svara med lämpligt meddelande och statuskod om allt gått väl ()
-- API:et ska svara med lämpligt meddelande och statuskod om routen inte finns ()
+- API:et ska svara med lämpligt meddelande och statuskod om allt gått väl (X)
+- API:et ska svara med lämpligt meddelande och statuskod om routen inte finns (X)
 - API:et ska svara med lämpligt meddelande och statuskod om resursen inte finns ()
-- API:et ska svara med lämpligt meddelande och statuskod om requesten inte är korrekt ()
+- API:et ska svara med lämpligt meddelande och statuskod om requesten inte är korrekt (X)
 - API:et ska innehålla en README-fil med tillhörande dokumentation med en lista på varje route och exempel på hur den anropas (X)
