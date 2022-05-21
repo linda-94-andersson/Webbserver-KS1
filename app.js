@@ -1,5 +1,6 @@
 
 const http = require("http");
+const fs = require("fs");
 const Todo = require("./controller");
 const { getReqData } = require("./utils");
 
@@ -19,25 +20,35 @@ const server = http.createServer(async (req, res) => {
 
     if (req.url === "/api/todos" && req.method === "GET") {
         const todos = await new Todo().getTodos();
-        res.writeHead(200, { "Content-Type": "application/json" });
+        res.setHeader("Content-Type", "application/json");
+        res.statusCode = 200;
         res.end(JSON.stringify(todos));
+
+        fs.readFile("data.json", (err, data) => {
+            if (err) throw error;
+
+            const response = data.toString();
+            console.log(response, " res");
+
+            res.end(JSON.stringify(response));
+        })
     }
     else if (req.url.match(/\/api\/todos\/([0-9]+)/) && req.method === "GET") {
         try {
             const id = req.url.split("/")[3];
             const todo = await new Todo().getTodo(id);
-            res.writeHead(200, { "Content-Type": "application/json" });
+            res.setHeader("Content-Type", "application/json");
+            res.statusCode = 200;
             res.end(JSON.stringify(todo));
 
-            // fs.readFile("todo.JSON", (err, data) => {
-            //     if (err) throw error;
-            //     console.log(data.toString());
+            fs.readFile("data.json", (err, data) => {
+                if (err) throw error;
 
-            //     const info = data.toString();
-            //     console.log(info);
+                const response = data.toString();
+                console.log(response, " res");
 
-            //     res.end(JSON.stringify(info));
-            // })
+                res.end(JSON.stringify(response));
+            })
 
         } catch (error) {
             res.writeHead(404, { "Content-Type": "application/json" });
@@ -48,7 +59,8 @@ const server = http.createServer(async (req, res) => {
         try {
             const id = req.url.split("/")[3];
             let message = await new Todo().deleteTodo(id);
-            res.writeHead(200, { "Content-Type": "application/json" });
+            res.setHeader("Content-Type", "application/json");
+            res.statusCode = 200;
             res.end(JSON.stringify({ message }));
         } catch (error) {
             res.writeHead(404, { "Content-Type": "application/json" });
@@ -59,7 +71,8 @@ const server = http.createServer(async (req, res) => {
         try {
             const id = req.url.split("/")[3];
             let updated_todo = await new Todo().updateTodo(id);
-            res.writeHead(200, { "Content-Type": "application/json" });
+            res.setHeader("Content-Type", "application/json");
+            res.statusCode = 200;
             res.end(JSON.stringify(updated_todo));
         } catch (error) {
             res.writeHead(404, { "Content-Type": "application/json" });
@@ -70,7 +83,8 @@ const server = http.createServer(async (req, res) => {
         try {
             const id = req.url.split("/")[3];
             let updated_todo = await new Todo().updateTodo(id);
-            res.writeHead(200, { "Content-Type": "application/json" });
+            res.setHeader("Content-Type", "application/json");
+            res.statusCode = 200;
             res.end(JSON.stringify(updated_todo));
         } catch (error) {
             res.writeHead(404, { "Content-Type": "application/json" });
@@ -80,7 +94,8 @@ const server = http.createServer(async (req, res) => {
     else if (req.url === "/api/todos" && req.method === "POST") {
         let todo_data = await getReqData(req);
         let todo = await new Todo().createTodo(JSON.parse(todo_data));
-        res.writeHead(200, { "Content-Type": "application/json" });
+        res.setHeader("Content-Type", "application/json");
+        res.statusCode = 201;
         res.end(JSON.stringify(todo));
     }
     else {
@@ -92,3 +107,26 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, () => {
     console.log(`Server started on port: ${PORT}`);
 });
+
+
+// Exemple kod
+// const fs = require("fs");
+
+// const customer = {
+//   name: process.argv[2],
+//   address: process.argv[3]
+// }
+
+// fs.readFile("./customers.json", (err, data) => {
+//   if (err) throw err;
+
+//   const parsedJson = JSON.parse(data);
+//   parsedJson.customers.push(customer)
+
+//   const stringifiedJson = JSON.stringify(parsedJson, null, 2);
+
+//   fs.writeFile("./customers.json", stringifiedJson, (err) => {
+//     if (err) throw err;
+//     console.log("Wrote to customers.json");
+//   })
+// })
