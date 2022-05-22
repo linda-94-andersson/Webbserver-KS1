@@ -56,6 +56,7 @@ const server = http.createServer(async (req, res) => {
         }
     }
     else if (req.url.match(/\/api\/todos\/([0-9]+)/) && req.method === "DELETE") {
+        // Setup med fs file, kan man deletea baserat på index/id? Kan man deletea alls utan unlink? 
         try {
             const id = req.url.split("/")[3];
             let message = await new Todo().deleteTodo(id);
@@ -74,6 +75,23 @@ const server = http.createServer(async (req, res) => {
             res.setHeader("Content-Type", "application/json");
             res.statusCode = 200;
             res.end(JSON.stringify(updated_todo));
+
+            fs.readFile("data.json", (err, data) => {
+                if (err) throw error;
+
+                const parsedJson = JSON.parse(data);
+                parsedJson.push(updated_todo);
+
+                const stringifiedJson = JSON.stringify(parsedJson, null, 2);
+
+                fs.writeFile("data.json", stringifiedJson, (err) => {
+                    if (err) throw err;
+
+                    res.statusCode = 200;
+                    res.end(JSON.stringify(updated_todo));
+                    console.log(updated_todo, " Updated to data.json");
+                })
+            })
         } catch (error) {
             res.writeHead(404, { "Content-Type": "application/json" });
             res.end(JSON.stringify({ message: error + " PATCH error" }));
@@ -86,6 +104,23 @@ const server = http.createServer(async (req, res) => {
             res.setHeader("Content-Type", "application/json");
             res.statusCode = 200;
             res.end(JSON.stringify(updated_todo));
+
+            fs.readFile("data.json", (err, data) => {
+                if (err) throw error;
+
+                const parsedJson = JSON.parse(data);
+                parsedJson.push(updated_todo);
+
+                const stringifiedJson = JSON.stringify(parsedJson, null, 2);
+
+                fs.writeFile("data.json", stringifiedJson, (err) => {
+                    if (err) throw err;
+
+                    res.statusCode = 200;
+                    res.end(JSON.stringify(updated_todo));
+                    console.log(updated_todo, " Updated to data.json");
+                })
+            })
         } catch (error) {
             res.writeHead(404, { "Content-Type": "application/json" });
             res.end(JSON.stringify({ message: error + " PUT error" }));
@@ -100,8 +135,13 @@ const server = http.createServer(async (req, res) => {
         fs.readFile("data.json", (err, data) => {
             if (err) throw error;
 
+            // Skulle vilja att den ej postar om id redan finns 
             const parsedJson = JSON.parse(data);
-            parsedJson.push(todo);
+            parsedJson.push({
+                id: todo.id,
+                name: todo.name,
+                completed: todo.completed
+            });
 
             const stringifiedJson = JSON.stringify(parsedJson, null, 2);
 
