@@ -1,10 +1,40 @@
 
 const http = require("http");
-const fs = require("fs");
-const Todo = require("./controller");
+const fs = require("fs/promises");
+const crypto = require("crypto");
 const { getReqData } = require("./utils");
 
 const PORT = process.env.PORT || 5000;
+
+const jsonPath = "data.json";
+
+async function readJson() {
+    try {
+        const json = await fs.readFile(jsonPath);
+        return JSON.parse(json);
+    } catch (error) {
+        console.error(error, " could not read json-file");
+        return null;
+    }
+}
+
+async function writeJson(data) {
+    try {
+        const json = JSON.stringify(data);
+        await fs.writeFile(jsonPath, json);
+    } catch (error) {
+        console.error(error, " could not write to file");
+    }
+}
+
+function sendJson(res, data, code = 200) {
+    res.writeHead(code, { "Content-Type": "application/json" });
+    res.end(JSON.stringify(data));
+}
+
+function sendError(res, message, code = 404) {
+    sendJson(res, { message }, code);
+}
 
 const server = http.createServer(async (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -18,146 +48,107 @@ const server = http.createServer(async (req, res) => {
         return;
     }
 
-    if (req.url === "/api/todos" && req.method === "GET") {
-        const todos = await new Todo().getTodos();
-        res.setHeader("Content-Type", "application/json");
-        res.statusCode = 200;
-        res.end(JSON.stringify(todos));
-
-        fs.readFile("data.json", (err, data) => {
-            if (err) throw error;
-
-            const response = data.toString();
-            console.log(response, " res todos");
-
-            res.end(JSON.stringify(response));
-        })
+    const [route, id] = req.url.split("/").filter((urls) => urls.length > 0);
+    if (route !== "todos") {
+        return sendError(res, "Route not found");
     }
-    else if (req.url.match(/\/api\/todos\/([0-9]+)/) && req.method === "GET") {
-        try {
-            const id = req.url.split("/")[3];
-            const todo = await new Todo().getTodo(id);
-            res.setHeader("Content-Type", "application/json");
-            res.statusCode = 200;
-            res.end(JSON.stringify(todo));
 
-            fs.readFile("data.json", (err, data) => {
-                if (err) throw error;
+    const todos = await readJson();
+    if (!todos) {
+        res.statusCode = 500;
+        res.end();
+        return;
+    }
 
-                const response = data.toString();
-                res.end(JSON.stringify(response));
-
-                console.log(todo, " res todo");
-            })
-
-        } catch (error) {
-            res.writeHead(404, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ message: error + " GET:id error" }));
+    if (req.method === "GET") {
+        if (!id) {
+            return sendJson(res, todos);
         }
-    }
-    else if (req.url.match(/\/api\/todos\/([0-9]+)/) && req.method === "DELETE") {
-        // Setup med fs file, kan man deletea baserat på index/id? Kan man deletea alls utan unlink? 
-        try {
-            const id = req.url.split("/")[3];
-            let message = await new Todo().deleteTodo(id);
-            res.setHeader("Content-Type", "application/json");
-            res.statusCode = 200;
-            res.end(JSON.stringify({ message }));
-        } catch (error) {
-            res.writeHead(404, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ message: error + " DELETE error" }));
+
+        const todo = todos.find((todo) => todo.id === id);
+        if (!todo) {
+            return sendError(res, `Todo with id ${id} not found`);
         }
+
+        return sendJson(res, todo);
     }
-    else if (req.url.match(/\/api\/todos\/([0-9]+)/) && req.method === "PATCH") {
-        try {
-            const id = req.url.split("/")[3];
-            let updated_todo = await new Todo().updateTodo(id);
-            res.setHeader("Content-Type", "application/json");
-            res.statusCode = 200;
-            res.end(JSON.stringify(updated_todo));
 
-            fs.readFile("data.json", (err, data) => {
-                if (err) throw error;
-
-                const parsedJson = JSON.parse(data);
-                parsedJson.push(updated_todo);
-
-                const stringifiedJson = JSON.stringify(parsedJson, null, 2);
-
-                fs.writeFile("data.json", stringifiedJson, (err) => {
-                    if (err) throw err;
-
-                    res.statusCode = 200;
-                    res.end(JSON.stringify(updated_todo));
-                    console.log(updated_todo, " Updated to data.json");
-                })
-            })
-        } catch (error) {
-            res.writeHead(404, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ message: error + " PATCH error" }));
+    if (req.method === "DELETE") {
+        if (!id) {
+            return sendError(res, `Could not delete`, 400);
         }
-    }
-    else if (req.url.match(/\/api\/todos\/([0-9]+)/) && req.method === "PUT") {
-        try {
-            const id = req.url.split("/")[3];
-            let updated_todo = await new Todo().updateTodo(id);
-            res.setHeader("Content-Type", "application/json");
-            res.statusCode = 200;
-            res.end(JSON.stringify(updated_todo));
 
-            fs.readFile("data.json", (err, data) => {
-                if (err) throw error;
-
-                const parsedJson = JSON.parse(data);
-                parsedJson.push(updated_todo);
-
-                const stringifiedJson = JSON.stringify(parsedJson, null, 2);
-
-                fs.writeFile("data.json", stringifiedJson, (err) => {
-                    if (err) throw err;
-
-                    res.statusCode = 200;
-                    res.end(JSON.stringify(updated_todo));
-                    console.log(updated_todo, " Updated to data.json");
-                })
-            })
-        } catch (error) {
-            res.writeHead(404, { "Content-Type": "application/json" });
-            res.end(JSON.stringify({ message: error + " PUT error" }));
+        const index = todos.findIndex((todo) => todo.id === id);
+        if (index < 0) {
+            return sendError(res, `Todo with id ${id} not found`);
         }
+
+        const [deleted] = todos.splice(index, 1);
+        await writeJson(todos);
+        return sendJson(res, deleted);
     }
-    else if (req.url === "/api/todos" && req.method === "POST") {
-        let todo_data = await getReqData(req);
-        let todo = await new Todo().createTodo(JSON.parse(todo_data));
 
-        res.setHeader("Content-Type", "application/json");
+    if (req.method === "POST") {
+        const body = await getReqData(req);
+        if (!body) {
+            return sendError(res, "Empty request", 400);
+        }
+        const data = JSON.parse(body);
+        const todo = { id: crypto.randomBytes(6).toString("hex"), name: data.name, completed: false };
+        todos.push(todo);
+        await writeJson(todos);
 
-        fs.readFile("data.json", (err, data) => {
-            if (err) throw error;
-
-            // Skulle vilja att den ej postar om id redan finns 
-            const parsedJson = JSON.parse(data);
-            parsedJson.push({
-                id: todo.id,
-                name: todo.name,
-                completed: todo.completed
-            });
-
-            const stringifiedJson = JSON.stringify(parsedJson, null, 2);
-
-            fs.writeFile("data.json", stringifiedJson, (err) => {
-                if (err) throw err;
-
-                res.statusCode = 201;
-                res.end(JSON.stringify(todo));
-                console.log(todo_data, " Wrote to data.json");
-            })
-        })
+        return sendJson(res, todo, 201);
     }
-    else {
-        res.writeHead(404, { "Content-Type": "application/json" });
-        res.end(JSON.stringify({ message: "Route not found" }));
+
+    if (req.method === "PATCH") {
+        if (!id) {
+            return sendError(res, `Could not patch`, 400);
+        }
+        const index = todos.findIndex((todo) => todo.id === id);
+        if (index < 0) {
+            return sendError(res, `Todo with id ${id} not found`);
+        }
+        const body = await getReqData(req);
+        if (!body) {
+            return sendError(res, "Empty request", 400);
+        }
+        const data = JSON.parse(body);
+        todos[index] = {
+            id: todos[index].id,
+            name: data.name || todos[index].name,
+            completed: typeof data.completed === "boolean" ? data.completed : todos[index].completed
+        };
+
+        await writeJson(todos);
+
+        return sendJson(res, todos[index]);
     }
+
+    if (req.method === "PUT") {
+        if (!id) {
+            return sendError(res, `Could not put`, 400);
+        }
+        const index = todos.findIndex((todo) => todo.id === id);
+        if (index < 0) {
+            return sendError(res, `Todo with id ${id} not found`);
+        }
+        const body = await getReqData(req);
+        if (!body) {
+            return sendError(res, "Empty request", 400);
+        }
+        const data = JSON.parse(body);
+        todos[index] = {
+            ...data,
+            id: todos[index].id
+        };
+
+        await writeJson(todos);
+
+        return sendJson(res, todos[index]);
+    }
+
+    sendError(res, `${req.method} not allowed`, 400);
 });
 
 server.listen(PORT, () => {
