@@ -9,7 +9,7 @@ https://main--linda-a-to-do-list.netlify.app/
 ## Get all todos
 
 ```GET
-fetch('http://localhost:5000/api/todos')
+fetch('http://localhost:5000/todos')
             .then(res=>res.json())
             .then(json=>console.log(json))
 ```
@@ -17,22 +17,22 @@ fetch('http://localhost:5000/api/todos')
 ```OUTPUT
 [
     {
-    "id": 1,
+    "id": "b10958406143",
     "name": "Cod in Javascript",
     "completed": false
     },
     {
-    "id": 2,
+    "id": "61b616398a63",
     "name": "Cook dinner",
     "completed": false
     },
     {
-    "id": 3,
+    "id": "dda6807a9cd1",
     "name": "Take a walk",
     "completed": false
     },
     {
-    "id": 4,
+    "id": "318c81515cba",
     "name": "Watch Netflix",
     "completed": false
     }
@@ -42,14 +42,14 @@ fetch('http://localhost:5000/api/todos')
 ## Get a singel todo
 
 ```GET:id
-fetch('http://localhost:5000/api/todos/1')
+fetch('http://localhost:5000/todos/b10958406143')
             .then(res=>res.json())
             .then(json=>console.log(json))
 ```
 
 ```OUTPUT
     {
-    "id": 1,
+    "id": "b10958406143",
     "name": "Cod in Javascript",
     "completed": false
     }
@@ -58,12 +58,34 @@ fetch('http://localhost:5000/api/todos/1')
 ## Add new todo
 
 ```POST
-fetch('http://localhost:5000/api/todos', {
+fetch('http://localhost:5000/todos', {
             method:"POST",
             body:JSON.stringify(
                 {
-                    id: 1,
                     name: 'test product'
+                }
+            )
+        })
+            .then(res=>res.json())
+            .then(json=>console.log(json))
+```
+
+```OUTPUT
+    {
+    "id": "b10958406143",
+    "name": "test product",
+    "completed": false
+    }
+```
+
+## Update a todo
+
+```PUT
+fetch('http://localhost:5000/todos/b10958406143', {
+            method:"PUT",
+            body:JSON.stringify(
+                {
+                    name: 'new name',
                     completed: false
                 }
             )
@@ -74,29 +96,14 @@ fetch('http://localhost:5000/api/todos', {
 
 ```OUTPUT
     {
-    "id": 5,
-    "name": "test product",
+    "id": "b10958406143",
+    "name": "new name",
     "completed": false
     }
 ```
 
-## Update a todo
-
-```PUT
-fetch('http://localhost:5000/api/todos/6', {
-            method:"PUT",
-            body:JSON.stringify(
-                {
-                    name: 'test product'
-                }
-            )
-        })
-            .then(res=>res.json())
-            .then(json=>console.log(json))
-```
-
 ```PATCH
-fetch('http://localhost:5000/api/todos/6', {
+fetch('http://localhost:5000/todos/b10958406143', {
             method:"PATCH",
             body:JSON.stringify(
                 {
@@ -110,7 +117,7 @@ fetch('http://localhost:5000/api/todos/6', {
 
 ```OUTPUT
     {
-    "id": 6,
+    "id": "b10958406143",
     "name": "new name",
     "completed": false
     }
@@ -119,7 +126,7 @@ fetch('http://localhost:5000/api/todos/6', {
 ## Delete a todo
 
 ```DELETE
-fetch('http://localhost:5000/api/todos/6', {
+fetch('http://localhost:5000/todos/b10958406143', {
             method:"DELETE"
         })
             .then(res=>res.json())
@@ -128,7 +135,7 @@ fetch('http://localhost:5000/api/todos/6', {
 
 ```OUTPUT
     {
-    "id": 6,
+    "id": "b10958406143",
     "name": ".....",
     "completed": .....
     }
@@ -148,13 +155,13 @@ fetch('http://localhost:5000/api/todos/6', {
 - PATCH /todos/:id - Ändra en todo (partial) (X)
 - DELETE /todos/:id - Ta bort en todo (X)
 - API:et ska endast ta emot och skicka data i JSON-format (X)
-- API:et ska lagra och läsa data från en JSON-fil, så att applikationen bibehåller datan vid omstart eller krasch. ()
+- API:et ska lagra och läsa data från en JSON-fil, så att applikationen bibehåller datan vid omstart eller krasch. (X)
 - Det ska finnas en tillhörande frontend av valfritt slag (ex. Todo-listen från K1 eller K2) (X)
 
 ### För att uppnå Väl Godkänt behöver du implementera minst 4 av följande kriterier:
 
 - API:et ska svara med lämpligt meddelande och statuskod om allt gått väl (X)
 - API:et ska svara med lämpligt meddelande och statuskod om routen inte finns (X)
-- API:et ska svara med lämpligt meddelande och statuskod om resursen inte finns ()
+- API:et ska svara med lämpligt meddelande och statuskod om resursen inte finns (X)
 - API:et ska svara med lämpligt meddelande och statuskod om requesten inte är korrekt (X)
 - API:et ska innehålla en README-fil med tillhörande dokumentation med en lista på varje route och exempel på hur den anropas (X)
