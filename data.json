@@ -1,22 +1,3 @@
 [
-    {
-        "id": 1,
-        "name": "Cod in Javascript",
-        "completed": false
-    },
-    {
-        "id": 2,
-        "name": "Cook dinner",
-        "completed": false
-    },
-    {
-        "id": 3,
-        "name": "Take a walk",
-        "completed": false
-    },
-    {
-        "id": 4,
-        "name": "Watch Netflix",
-        "completed": false
-    }
+  
 ]
